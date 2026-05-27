@@ -1,26 +1,26 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand Colors */
+  --color-jute-base: #FAEDCD;
+  --color-terracotta: #D4A373;
+  --color-forest-slate: #2F4F4F;
+  --color-soft-leaf: #CCD5AE;
+
+  /* Typography Integration */
+  --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-playfair), serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  /* Custom DaisyUI Theme */
+  [data-theme="hopetheme"] {
+    color-scheme: light;
+    --primary: #D4A373;
+    --secondary: #2F4F4F;
+    --accent: #CCD5AE;
+    --neutral: #2F4F4F;
+    --base-100: #FAEDCD;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

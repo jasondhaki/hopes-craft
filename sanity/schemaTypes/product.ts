@@ -28,10 +28,18 @@ export default defineType({
       type: 'reference',
       to: [{ type: 'category' }],
     }),
+    // DUAL CURRENCY FIELDS ADDED HERE
     defineField({
-      name: 'price',
+      name: 'priceUSD',
       title: 'Price (USD)',
       type: 'number',
+      description: 'International retail price in US Dollars.',
+    }),
+    defineField({
+      name: 'priceBDT',
+      title: 'Price (BDT)',
+      type: 'number',
+      description: 'Domestic retail price in Bangladeshi Taka.',
     }),
     defineField({
       name: 'weight',

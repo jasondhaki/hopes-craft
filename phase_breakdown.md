@@ -294,3 +294,35 @@ This extra change successfully links up the final user-facing navigation item in
 ## Project Status Note
 
 With the completion of the legal suite, the frontend architecture and simulated e-commerce loop are 100% finished. The platform is secure, fully compliant with international gateway requirements, and aesthetically polished.
+
+# Extra Change 3: Home Page Overhaul Breakdown
+
+**Status:** Completed
+**Project:** Hope's Craft
+
+---
+
+## Core Achievements
+
+* **Server Component Conversion:** Successfully converted `app/page.tsx` into an async Server Component to securely and rapidly fetch live product data directly from Sanity.
+* **Component Extraction:** Extracted the interactive `HeroSlider` into a dedicated client component to maintain compatibility with the new server-side homepage.
+* **Trust Bar Integration:** Built a responsive, conversion-optimized `TrustBar` highlighting key e-commerce guarantees (Authentic Jute, Global Shipping, Easy Returns, Artisan Made).
+* **Dynamic Product Sliders:** Implemented two distinct CSS-only horizontal sliders (Latest Arrivals & Best Sellers) utilizing `snap-x` for a native, app-like scrolling experience without bloated third-party libraries.
+* **UI Consistency:** Reused the global `<ProductCard />` component within the homepage sliders to guarantee 100% design consistency (hover states, "Quick Add" interactions, and typography) across the entire platform.
+
+---
+
+## File Directory Modifications
+
+| File Path | Actions Performed |
+| :--- | :--- |
+| `components/HeroSlider.tsx` | Extracted the `useState`/`useEffect` hero background slider logic into a standalone client component. |
+| `components/TrustBar.tsx` | Created a new static component featuring `lucide-react` icons and conversion-focused microcopy. |
+| `app/page.tsx` | Upgraded to an async Server Component. Added parallel GROQ queries for standard products and `isBestSeller` products. Structured the layout with the new extracted components and horizontal `snap-x` sliders. |
+| `app/globals.css` | Injected `.hide-scrollbar` utility classes to ensure the horizontal sliders maintain a sleek, invisible-scroll aesthetic across all browsers. |
+
+---
+
+## Project Status Note
+
+The storefront homepage is now fully dynamic and matches the premium, unified aesthetic of the dedicated shop routes.

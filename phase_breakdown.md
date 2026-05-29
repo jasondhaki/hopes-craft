@@ -326,3 +326,35 @@ With the completion of the legal suite, the frontend architecture and simulated 
 ## Project Status Note
 
 The storefront homepage is now fully dynamic and matches the premium, unified aesthetic of the dedicated shop routes.
+
+# Extra Change 4: Homepage Polish & Dynamic UI Upgrades
+
+**Status:** Completed
+**Project:** Hope's Craft
+
+---
+
+## Core Achievements
+
+* **Infinite Clone Auto-Slider:** Upgraded the Latest Arrivals slider into a seamless, auto-playing infinite loop. Utilized a JavaScript clone buffer (`[...products, ...products, ...products]`) and native DOM scrolling to achieve 60fps performance without heavy third-party carousel libraries.
+* **Editorial Masonry Layout:** Replaced the standard 50/50 "Our Story" split with a 12-column CSS Grid masonry collage. This allows for overlapping, transform-shifted images on desktop and a clean horizontal scroll fallback on mobile.
+* **Dynamic Category Sub-Queries:** Upgraded the "Curated Collections" section to fetch categories directly from the Sanity CMS. Implemented an advanced GROQ sub-query to automatically pull the thumbnail image from the *first product* belonging to each respective category.
+* **Atmospheric Glassmorphism & Textures:** Shifted away from flat background colors by implementing local background images layered with precise `backdrop-blur` and opacity overlays (e.g., `#f5e8ce/60` for Latest Arrivals, `forest-slate/60` for Categories).
+* **Premium Typography & Spacing:** Dialed in exact, user-specified padding/margins across the homepage. Upgraded the Impact Statistics bar to an airy, icon-free layout using oversized `font-light` numbers and highly tracked (`tracking-[0.2em]`) metadata.
+* **Local Asset Migration:** Completely stripped all Unsplash placeholder URLs from the codebase, migrating the Hero Slider, Story Collage, Background Textures, and CTA Cards to point directly to the local `public/images/` directory.
+
+---
+
+## File Directory Modifications
+
+| File Path | Actions Performed |
+| :--- | :--- |
+| `components/LatestArrivalsSlider.tsx` | Implemented `useRef` and `setInterval` for 4-second auto-scrolling. Added the infinite clone buffer array and seamless jump logic to remove the visual "rewind" effect. |
+| `app/page.tsx` | **Major Overhaul.** Added GROQ query for dynamic categories. Integrated the new Masonry Artisan Collage. Applied local background images and glassmorphism overlays to the *Latest Arrivals*, *Curated Collections*, and *Newsletter CTA* sections. Redesigned the Quick Impact Statistics bar for an airy, premium look. |
+| `components/HeroSlider.tsx` | Removed hardcoded Unsplash URLs and updated the `backgroundImages` array to point to local `/images/hero-1.jpg`, etc. |
+
+---
+
+## Project Status Note
+
+The frontend architecture, global state (Cart), dynamic routing, and visual layouts are now **100% complete** and locked in according to the master blueprint. The platform is strictly awaiting real inventory population via Sanity CMS and final edge-network deployment.

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
+// Pointing to your local images in the public/images folder
 const backgroundImages = [
-  "https://images.unsplash.com/photo-1544485501-44754580fb2b?q=80&w=2070&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=2071&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1459501462159-97d5bded1416?q=80&w=2070&auto=format&fit=crop"
+  "/images/hero-1.jpg",
+  "/images/hero-2.jpg",
+  "/images/hero-3.jpg"
 ];
 
 export default function HeroSlider() {

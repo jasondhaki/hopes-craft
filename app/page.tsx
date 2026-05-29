@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Leaf, Users, Globe2, Mail } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { client } from "../lib/sanity";
 import HeroSlider from "../components/HeroSlider";
 import TrustBar from "../components/TrustBar";
@@ -18,12 +18,20 @@ async function getHomePageData() {
   const bestSellers = await client.fetch(`*[_type == "product" && isBestSeller == true][0...5] {
     _id, title, name, "slug": slug.current, "imageUrl": image.asset->url, priceBDT, priceUSD, "category": category->title
   }`);
+
+  // Fetch all categories dynamically
+  const categories = await client.fetch(`*[_type == "category"] {
+    _id, 
+    title, 
+    "slug": slug.current, 
+    "imageUrl": *[_type == "product" && references(^._id)][0].image.asset->url
+  }`);
   
-  return { latest, bestSellers };
+  return { latest, bestSellers, categories };
 }
 
 export default async function Home() {
-  const { latest, bestSellers } = await getHomePageData();
+  const { latest, bestSellers, categories } = await getHomePageData();
 
   return (
     <div className="flex flex-col w-full">
@@ -34,16 +42,30 @@ export default async function Home() {
       {/* 2. Trust Bar */}
       <TrustBar />
 
-      {/* 3. Latest Arrivals Auto-Slider */}
-      <section className="py-12 px-6 max-w-7xl mx-auto w-full">
-        <div className="flex justify-between items-end mb-10 border-b border-gray-100 pb-4">
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-forest-slate">Latest Arrivals</h2>
-          <Link href="/shop" className="font-sans text-xs font-bold uppercase tracking-widest text-terracotta hover:text-forest-slate transition-colors">View All</Link>
+      {/* 3. UPDATED: Latest Arrivals Auto-Slider (Fixed Contrast & Overlay) */}
+      <section className="py-16 w-full relative overflow-hidden">
+        {/* Background Texture & Light Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/latest-bg.jpg" 
+            alt="Warm sunlit background" 
+            className="w-full h-full object-cover opacity-80" 
+          />    
+          {/* Bumped opacity to 60% for a better frosted glass effect so cards pop */}
+          <div className="absolute inset-0 bg-[#f5e8ce]/60 backdrop-blur-[2px]"></div>
         </div>
-        <LatestArrivalsSlider products={latest} />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="flex justify-between items-end mb-10 border-b border-forest-slate/20 pb-4">
+            {/* Changed text-white back to text-forest-slate for perfect readability */}
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-forest-slate drop-shadow-sm">Latest Arrivals</h2>
+            <Link href="/shop" className="font-sans text-xs font-bold uppercase tracking-widest text-forest-slate hover:text-terracotta transition-colors">View All</Link>
+          </div>
+          <LatestArrivalsSlider products={latest} />
+        </div>
       </section>
 
-      {/* 4. UPDATED: Artisan Story Collage (Local Images) */}
+      {/* 4. Artisan Story Collage */}
       <section className="py-26 bg-white w-full border-t border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -99,50 +121,51 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5. UPDATED: Shop by Category (Local Images) */}
-      <section className="py-16 bg-jute-base w-full">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* 5. Dynamic Shop by Category */}
+      <section className="py-20 w-full relative overflow-hidden">
+        {/* Background Texture & Premium Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/jute-texture-bg.jpg" 
+            alt="Jute texture background" 
+            className="w-full h-full object-cover opacity-90" 
+          />    
+          <div className="absolute inset-0 bg-forest-slate/60 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-forest-slate mb-4">Curated Collections</h2>
-            <p className="font-sans text-gray-600 max-w-2xl mx-auto">Explore our sustainable goods, handcrafted for every aspect of your life.</p>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">Curated Collections</h2>
+            <p className="font-sans text-gray-200 max-w-2xl mx-auto font-medium tracking-wide drop-shadow-md">Explore our sustainable goods, handcrafted for every aspect of your life.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Category 1 */}
-            <Link href="/shop" className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-sm">
-              <img src="/images/category-bags.jpg" alt="Bags & Totes" className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                <h3 className="font-serif text-3xl text-white font-bold tracking-wide drop-shadow-md mb-2">Bags & Totes</h3>
-                <span className="text-white text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 transform">Shop Now</span>
-              </div>
-            </Link>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+            {categories.map((cat: any) => (
+              <Link href={`/shop`} key={cat._id} className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl border border-white/10 hover:border-white/30 transition-colors">
+                
+                {cat.imageUrl ? (
+                  <img src={cat.imageUrl} alt={cat.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out" />
+                ) : (
+                  <div className="w-full h-full bg-jute-base flex items-center justify-center text-forest-slate font-sans text-sm">No Image</div>
+                )}
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <h3 className="font-serif text-2xl md:text-3xl text-white font-bold tracking-wide drop-shadow-lg mb-2">{cat.title}</h3>
+                  <div className="flex items-center space-x-2 text-terracotta opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Shop Now</span>
+                    <ArrowRight size={14} className="text-terracotta" />
+                  </div>
+                </div>
 
-            {/* Category 2 */}
-            <Link href="/shop" className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-sm">
-              <img src="/images/category-decor.jpg" alt="Home Decor" className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                <h3 className="font-serif text-3xl text-white font-bold tracking-wide drop-shadow-md mb-2">Home Decor</h3>
-                <span className="text-white text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 transform">Shop Now</span>
-              </div>
-            </Link>
-
-            {/* Category 3 */}
-            <Link href="/shop" className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-sm">
-              <img src="/images/category-accessories.jpg" alt="Accessories" className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                <h3 className="font-serif text-3xl text-white font-bold tracking-wide drop-shadow-md mb-2">Accessories</h3>
-                <span className="text-white text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 transform">Shop Now</span>
-              </div>
-            </Link>
-
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 6. Best Sellers Slider (Manual Scroll) */}
+      {/* 6. Best Sellers Slider */}
       {bestSellers?.length > 0 && (
         <section className="py-24 px-6 w-full bg-white">
           <div className="max-w-7xl mx-auto">
@@ -161,43 +184,73 @@ export default async function Home() {
         </section>
       )}
 
-      {/* 7. Quick Impact Statistics */}
-      <section className="py-7 bg-forest-slate text-white w-full">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
-            <div className="flex flex-col items-center pt-8 md:pt-0 px-4">
-              <Users size={40} strokeWidth={1} className="text-terracotta mb-4" />
-              <h3 className="font-serif text-4xl font-bold mb-2">500+</h3>
-              <p className="font-sans text-sm uppercase tracking-widest font-bold text-white/70">Artisans Empowered</p>
+      {/* 7. Elegant Quick Impact Statistics */}
+      <section className="py-6 bg-[#f5e8ce] text-forest-slate w-full border-t border-gray-100">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-forest-slate/10">
+            <div className="flex flex-col items-center pt-6 md:pt-0 px-4">
+              <h3 className="font-serif text-3xl md:text-4xl font-semibold mb-3 text-terracotta">500+</h3>
+              <p className="font-sans text-[14px] uppercase tracking-[0.2em] font-bold text-forest-slate/60">Artisans Empowered</p>
             </div>
-            <div className="flex flex-col items-center pt-8 md:pt-0 px-4">
-              <Leaf size={40} strokeWidth={1} className="text-terracotta mb-4" />
-              <h3 className="font-serif text-4xl font-bold mb-2">100%</h3>
-              <p className="font-sans text-sm uppercase tracking-widest font-bold text-white/70">Biodegradable Jute</p>
+            <div className="flex flex-col items-center pt-6 md:pt-0 px-4">
+              <h3 className="font-serif text-3xl md:text-4xl font-semibold mb-3 text-terracotta">100%</h3>
+              <p className="font-sans text-[14px] uppercase tracking-[0.2em] font-bold text-forest-slate/60">Biodegradable Jute</p>
             </div>
-            <div className="flex flex-col items-center pt-8 md:pt-0 px-4">
-              <Globe2 size={40} strokeWidth={1} className="text-terracotta mb-4" />
-              <h3 className="font-serif text-4xl font-bold mb-2">Global</h3>
-              <p className="font-sans text-sm uppercase tracking-widest font-bold text-white/70">Ethical Export</p>
+            <div className="flex flex-col items-center pt-6 md:pt-0 px-4">
+              <h3 className="font-serif text-3xl md:text-4xl font-semibold mb-3 text-terracotta">Global</h3>
+              <p className="font-sans text-[14px] uppercase tracking-[0.2em] font-bold text-forest-slate/60">Sustainable Exports</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 8. Newsletter & B2B Call to Action */}
-      <section className="py-24 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-6 max-w-3xl text-center">
-          <Mail size={32} strokeWidth={1} className="text-black mx-auto mb-6" />
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-black mb-4">Join the Jute Journey</h2>
-          <p className="font-sans text-gray-500 mb-8 max-w-xl mx-auto">
-            Subscribe to receive updates on new artisan collections, or register your business for wholesale access and bulk pricing.
-          </p>
-          <form className="flex flex-col sm:flex-row items-center justify-center max-w-lg mx-auto gap-3">
-            <input type="email" placeholder="Enter your email address..." className="w-full px-6 py-4 bg-gray-50 border border-gray-200 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-terracotta" required />
-            <button type="button" className="w-full sm:w-auto bg-black text-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-terracotta transition-colors whitespace-nowrap">Subscribe</button>
-          </form>
-          <div className="mt-8 pt-8 border-t border-gray-100">
-            <Link href="/wholesale" className="text-sm font-sans font-bold text-black uppercase tracking-widest hover:text-terracotta transition-colors underline underline-offset-4">Looking for Wholesale? Click Here</Link>
+      <section className="py-24 bg-white w-full">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="relative rounded-sm overflow-hidden shadow-2xl">
+            
+            {/* Background Image & Overlay */}
+            <div className="absolute inset-0">
+              <img 
+                src="/images/jute-field-cta.jpg" 
+                alt="Lively jute field" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-forest-slate/70"></div>
+            </div>
+
+            {/* Content Core */}
+            <div className="relative z-10 py-24 px-6 md:px-12 text-center flex flex-col items-center">
+              <Mail size={40} strokeWidth={1} className="text-terracotta mb-6" />
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+                Join the Jute Journey
+              </h2>
+              <p className="font-sans text-gray-300 mb-12 max-w-xl mx-auto text-lg">
+                Subscribe to receive updates on new artisan collections, or register your business for wholesale access and bulk pricing.
+              </p>
+              
+              <form className="flex flex-col sm:flex-row items-center justify-center w-full max-w-lg mx-auto gap-3 mb-10">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email address..." 
+                  className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-terracotta text-white placeholder-gray-400" 
+                  required 
+                />
+                <button 
+                  type="button" 
+                  className="w-full sm:w-auto bg-terracotta text-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-forest-slate transition-colors whitespace-nowrap"
+                >
+                  Subscribe
+                </button>
+              </form>
+              
+              <div className="pt-8 border-t border-white/20 w-full max-w-sm mx-auto">
+                <Link href="/wholesale" className="text-sm font-sans font-bold text-white uppercase tracking-widest hover:text-terracotta transition-colors underline underline-offset-4">
+                  Looking for Wholesale? Click Here
+                </Link>
+              </div>
+            </div>
+            
           </div>
         </div>
       </section>

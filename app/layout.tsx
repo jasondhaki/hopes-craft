@@ -3,6 +3,9 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { CurrencyProvider } from "../context/CurrencyContext"; 
+// 1. Import the new Cart Provider
+import { CartProvider } from "../context/CartContext"; 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -20,12 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="hopetheme">
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-jute-base text-forest-slate min-h-screen flex flex-col`}>
-        <Navbar />
-        {/* The main content area will expand to push the footer down */}
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        {/* Wrap with Currency, then Cart */}
+        <CurrencyProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

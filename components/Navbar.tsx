@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
+import { useCurrency } from "../context/CurrencyContext";
+// 1. Import the Cart context
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
-  const [currency, setCurrency] = useState<"USD" | "BDT">("BDT");
+  const { currency, toggleCurrency } = useCurrency();
+  // 2. Pull the live totalItems count from the global brain
+  const { totalItems } = useCart();
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleCurrency = () => {
-    setCurrency((prev) => (prev === "USD" ? "BDT" : "USD"));
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full flex flex-col shadow-sm">
@@ -33,17 +35,15 @@ export default function Navbar() {
 
           {/* Brand Logo & Placeholder */}
           <Link href="/" className="flex items-center space-x-3 group">
-            {/* Temporary Logo Placeholder */}
             <div className="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-black font-serif text-lg leading-none transition-transform group-hover:scale-105">
               HC
             </div>
-            {/* Brand Text */}
             <span className="font-serif text-2xl font-bold text-black tracking-tight hidden sm:block">
               Hope's<span className="text-terracotta italic font-light ml-1">Craft</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation Links (The 5 Categories) */}
+          {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-8 font-sans">
             <Link href="/" className="text-sm font-semibold text-black hover:text-terracotta transition-colors">Home</Link>
             <Link href="/shop" className="text-sm font-semibold text-black hover:text-terracotta transition-colors">Shop</Link>
@@ -55,7 +55,7 @@ export default function Navbar() {
           {/* Right Utilities Container */}
           <div className="flex items-center space-x-4 lg:space-x-6">
             
-            {/* Search Bar - Sleek Gray */}
+            {/* Search Bar */}
             <div className="relative hidden md:block group">
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-terracotta transition-colors" />
               <input 
@@ -80,20 +80,20 @@ export default function Navbar() {
               <User size={22} strokeWidth={1.5} />
             </button>
             
-            {/* Cart Icon & Badge */}
-            <button className="relative p-1 text-black hover:text-terracotta transition-colors">
+            {/* Cart Icon & Live Badge */}
+            <Link href="/cart" className="relative p-1 text-black hover:text-terracotta transition-colors">
               <ShoppingBag size={22} strokeWidth={1.5} />
+              {/* 3. Inject the dynamic totalItems here */}
               <span className="absolute -top-1 -right-1 bg-terracotta text-white text-[10px] font-bold rounded-full h-[18px] w-[18px] flex items-center justify-center border-2 border-white">
-                0
+                {totalItems}
               </span>
-            </button>
+            </Link>
           </div>
         </div>
 
         {/* Mobile Navigation Dropdown */}
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-6 flex flex-col space-y-5 font-sans shadow-lg absolute w-full">
-            {/* Mobile Search */}
             <div className="relative w-full mb-2">
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input 
@@ -111,7 +111,6 @@ export default function Navbar() {
             
             <div className="h-px bg-gray-200 w-full my-2"></div>
             
-            {/* Mobile Utils */}
             <div className="flex items-center justify-between pt-2">
               <button onClick={toggleCurrency} className="flex items-center space-x-2 text-base font-bold text-black">
                 <span className="text-xl leading-none font-serif font-medium">{currency === "USD" ? "$" : "৳"}</span>

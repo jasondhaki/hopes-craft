@@ -235,3 +235,31 @@ The complete consumer e-commerce loop is finished. [cite_start]The project is fu
 ## Project Completion Status
 
 All seven phases of the HOPE Technical Blueprint have been successfully executed. The platform now features a headless Sanity CMS, a global shopping cart state, a dynamic BDT/USD currency toggle, simulated checkout flows, and a secure B2B contact portal. The application is ready for final content population and eventual real-world payment gateway injection.
+
+# Extra Change 1: Contact Us Page Breakdown
+
+**Status:** Completed
+**Project:** Hope's Craft
+
+---
+
+## Core Achievements
+
+* **Dedicated Contact Route:** Developed a responsive `/contact` landing page to handle general customer support inquiries, keeping the B2B portal strictly for wholesale.
+* **Simulated Submission State:** Engineered a client-side form with a simulated network request (`setTimeout`) that transitions into a clean, brand-aligned success screen upon submission.
+* **Brand Aesthetic Integration:** Applied the "magazine style" visual language using the established color palette (Forest Slate, Terracotta, Jute Base) and typography (Playfair Display, Inter).
+* **Turbopack Bug Resolution:** Successfully diagnosed and resolved a common Next.js 15+ HMR (Hot Module Replacement) routing glitch ("default export is not a React Component") via a hard server reset.
+
+---
+
+## File Directory Modifications
+
+| File Path | Actions Performed |
+| :--- | :--- |
+| `app/contact/page.tsx` | Created the new frontend route. Built a two-column layout featuring static studio contact details alongside an interactive message form. Integrated React `useState` for form handling and Lucide icons for visual hierarchy. |
+
+---
+
+## Project Status Note
+
+This extra change successfully links up the final user-facing navigation item in the global Navbar. The platform is structurally complete, pending the generation of boilerplate legal pages (Terms & Conditions, Privacy Policy) required for payment gateway approval.

@@ -15,7 +15,11 @@ interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: any) => void;
   removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, delta: number) => void;
+  clearCart: () => void;
   totalItems: number;
+  subtotalBDT: number;
+  subtotalUSD: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -26,17 +30,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addToCart = (product: any) => {
     setCartItems((prev) => {
       const existingItem = prev.find(item => item._id === product._id);
-      
       if (existingItem) {
-        // If it exists, just increase the quantity
         return prev.map(item =>
-          item._id === product._id 
-            ? { ...item, quantity: item.quantity + 1 } 
-            : item
+          item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      
-      // If it's a new item, add it to the array
       return [...prev, {
         _id: product._id,
         title: product.title || product.name || "Unnamed Product",
@@ -52,11 +50,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems((prev) => prev.filter(item => item._id !== productId));
   };
 
-  // Automatically calculate total number of items in the cart for the Navbar badge
+  const updateQuantity = (productId: string, delta: number) => {
+    setCartItems((prev) => prev.map(item => {
+      if (item._id === productId) {
+        const newQuantity = Math.max(1, item.quantity + delta); // Prevent going below 1
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    }));
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const subtotalBDT = cartItems.reduce((total, item) => total + (item.priceBDT * item.quantity), 0);
+  const subtotalUSD = cartItems.reduce((total, item) => total + (item.priceUSD * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, totalItems }}>
+    <CartContext.Provider value={{ 
+      cartItems, addToCart, removeFromCart, updateQuantity, clearCart, 
+      totalItems, subtotalBDT, subtotalUSD 
+    }}>
       {children}
     </CartContext.Provider>
   );

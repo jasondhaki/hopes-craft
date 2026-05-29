@@ -136,3 +136,40 @@ The global frontend structure is complete. The project is fully prepped to trans
 ## Next Steps Ready for Execution
 
 The brand narrative and global frontend structure are complete. The project is fully prepped to transition into **Phase 5: The Shop**, where we will fetch live product data from Sanity CMS, build dynamic product cards, and implement the frontend pricing logic tied to our BDT/USD toggle.
+
+# Phase 5 Comprehensive Breakdown
+
+**Status:** Completed
+**Project:** Hope's Craft
+
+---
+
+## Core Achievements
+
+* **Sanity CMS Integration:** Successfully bridged the Next.js frontend with the Sanity headless CMS, enabling secure data fetching.
+* **Dynamic Shop Catalog:** Built the main `/shop` page to dynamically query and render all products from the database using GROQ.
+* **Refined Product Cards:** Upgraded the UI of product cards with dynamic data bindings, subtle subtitles, and a hover-triggered "Quick Add" button.
+* **Dynamic Product Details Page (PDP):** Implemented Next.js dynamic routing (`[slug]`) to automatically generate dedicated pages for each product, ensuring compatibility with Next.js 15+ Promise-based parameters.
+* **Global Cart State Management:** Engineered a `CartContext` provider using React's Context API to manage cart items globally, allowing components like the Navbar to react instantly to state changes.
+
+---
+
+## File Directory Modifications
+
+| File Path | Actions Performed |
+| :--- | :--- |
+| `.env.local` | Verified Sanity Project ID and Dataset variables were correctly auto-populated by the installer. |
+| `lib/sanity.ts` | Created the Sanity client utility to establish the database connection and configure the image URL builder. |
+| `app/shop/page.tsx` | Created the main shop catalog. Implemented a server-side GROQ query to fetch all products and map them to `ProductCard` components. |
+| `app/shop/[slug]/page.tsx` | Created the dynamic PDP. Implemented a server-side GROQ query to fetch a specific product by slug, unwrapping the Next.js `params` Promise to ensure compatibility. |
+| `context/CartContext.tsx` | Created the global state provider to handle adding items, removing items, and calculating the total cart count. |
+| `app/layout.tsx` | Wrapped the application structure with the new `CartProvider` (nested within the `CurrencyProvider`). |
+| `components/Navbar.tsx` | Updated the shopping bag icon to dynamically display the `totalItems` value from the global cart state. |
+| `components/ProductCard.tsx` | Refined the UI and connected the "Quick Add" button to the `addToCart` function from the global context. |
+| `components/ProductActions.tsx` | Created a client component for the PDP to handle dynamic pricing and connect the "Add to Cart" button to the global context. |
+
+---
+
+## Next Steps Ready for Execution
+
+The product catalog and global cart state are fully operational. The project is fully prepped to transition into **Phase 6: Checkout & Payments**, where we will build the visual checkout flow and integrate dummy payment logic for domestic (bKash, SSLCommerz, COD) and international (Stripe, PayPal) orders, including region-based shipping calculations.

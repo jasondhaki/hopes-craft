@@ -173,3 +173,35 @@ The brand narrative and global frontend structure are complete. The project is f
 ## Next Steps Ready for Execution
 
 The product catalog and global cart state are fully operational. The project is fully prepped to transition into **Phase 6: Checkout & Payments**, where we will build the visual checkout flow and integrate dummy payment logic for domestic (bKash, SSLCommerz, COD) and international (Stripe, PayPal) orders, including region-based shipping calculations.
+
+# Phase 6 Comprehensive Breakdown
+
+**Status:** Completed
+**Project:** Hope's Craft
+
+---
+
+## Core Achievements
+
+* **Advanced Cart State:** Upgraded the global `CartContext` to handle quantity adjustments, item removals, and real-time subtotal calculations in both BDT and USD.
+* **Shopping Cart Review Page:** Built a dedicated `/cart` interface allowing users to review their selected items, adjust quantities, and view their subtotal before proceeding.
+* **Dynamic Checkout Flow:** Engineered the `/checkout` page with smart rendering logic tied to the global Currency state. 
+* [cite_start]**Regional Shipping Logic:** Implemented dummy shipping flat-rates that adapt based on the selected currency (domestic vs. international)[cite: 23].
+* **Payment Gateway UI:** Integrated the required dummy payment selection UI. [cite_start]Domestic users (BDT) see bKash, SSLCommerz, and COD, while International users (USD) see Stripe and PayPal[cite: 23].
+* **Order Confirmation:** Built a simulated processing state and a clean success screen to finalize the dummy transaction loop.
+
+---
+
+## File Directory Modifications
+
+| File Path | Actions Performed |
+| :--- | :--- |
+| `context/CartContext.tsx` | Added `updateQuantity`, `clearCart`, `subtotalBDT`, and `subtotalUSD` logic to handle math and precise cart controls. |
+| `app/cart/page.tsx` | Created the interactive cart review page with quantity adjusters, item removal, and an order summary sidebar. |
+| `app/checkout/page.tsx` | Created the checkout form, integrated the region-based logic (BDT vs USD) for shipping and payment options, and added the simulated success screen. |
+
+---
+
+## Next Steps Ready for Execution
+
+The complete consumer e-commerce loop is finished. [cite_start]The project is fully prepped to transition into the final phase, **Phase 7: B2B Portal & Security Hardening**. [cite_start]In this phase, we will build a dedicated Wholesale contact form to capture international bulk order inquiries, including specific fields for company details and shipping ports[cite: 402].

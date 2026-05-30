@@ -5,6 +5,7 @@ import HeroSlider from "../components/HeroSlider";
 import TrustBar from "../components/TrustBar";
 import ProductCard from "../components/ProductCard";
 import LatestArrivalsSlider from "../components/LatestArrivalsSlider";
+import HomeNewsletterForm from "../components/HomeNewsletterForm"; // <-- NEW IMPORT
 
 // Force dynamic to ensure fresh product data
 export const dynamic = "force-dynamic";
@@ -229,20 +230,8 @@ export default async function Home() {
                 Subscribe to receive updates on new artisan collections, or register your business for wholesale access and bulk pricing.
               </p>
               
-              <form className="flex flex-col sm:flex-row items-center justify-center w-full max-w-lg mx-auto gap-3 mb-10">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email address..." 
-                  className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-terracotta text-white placeholder-gray-400" 
-                  required 
-                />
-                <button 
-                  type="button" 
-                  className="w-full sm:w-auto bg-terracotta text-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-forest-slate transition-colors whitespace-nowrap"
-                >
-                  Subscribe
-                </button>
-              </form>
+              {/* INTERACTIVE NEWSLETTER FORM LOADED HERE */}
+              <HomeNewsletterForm />
               
               <div className="pt-8 border-t border-white/20 w-full max-w-sm mx-auto">
                 <Link href="/wholesale" className="text-sm font-sans font-bold text-white uppercase tracking-widest hover:text-terracotta transition-colors underline underline-offset-4">

@@ -1,9 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react"; // Only keeping the non-brand icon
+import { ArrowRight } from "lucide-react"; 
+import { useState } from "react";
+import { subscribeToNewsletter } from "../app/actions/subscribe";
 
 export default function Footer() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatus("idle");
+
+    const formData = new FormData();
+    formData.append("email", email);
+
+    const result = await subscribeToNewsletter(formData);
+
+    if (result.success) {
+      setStatus("success");
+      setEmail("");
+    } else {
+      setStatus("error");
+    }
+
+    setIsSubmitting(false);
+  };
+
   return (
     <footer className="bg-forest-slate text-jute-base pt-20 pb-10">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -62,27 +88,39 @@ export default function Footer() {
             <p className="font-sans text-sm text-gray-300 mb-2">
               Subscribe for updates on new artisan collections and exclusive B2B offers.
             </p>
-            <form 
-              className="flex flex-col space-y-3" 
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert("Thank you for subscribing!");
-              }}
-            >
-              <input
-                type="email"
-                required
-                placeholder="Email address"
-                className="w-full bg-forest-slate border border-gray-500 p-3 rounded-sm text-sm text-white focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta transition-colors placeholder:text-gray-400"
-              />
-              <button 
-                type="submit"
-                className="w-full bg-terracotta text-white py-3 px-4 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-forest-slate transition-colors rounded-sm flex items-center justify-center space-x-2 group"
+            
+            {status === "success" ? (
+              <div className="p-4 border border-terracotta/30 bg-terracotta/10 rounded-sm text-center">
+                <p className="font-sans text-white text-xs font-bold tracking-widest uppercase">Thank you for subscribing!</p>
+              </div>
+            ) : (
+              <form 
+                className="flex flex-col space-y-3" 
+                onSubmit={handleSubscribe}
               >
-                <span>Subscribe</span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </form>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
+                  className="w-full bg-forest-slate border border-gray-500 p-3 rounded-sm text-sm text-white focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta transition-colors placeholder:text-gray-400"
+                />
+                
+                {status === "error" && (
+                  <p className="text-red-400 text-xs font-sans">Something went wrong. Please try again.</p>
+                )}
+
+                <button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-terracotta text-white py-3 px-4 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-forest-slate transition-colors rounded-sm flex items-center justify-center space-x-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <span>{isSubmitting ? "Subscribing..." : "Subscribe"}</span>
+                  {!isSubmitting && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
+                </button>
+              </form>
+            )}
           </div>
           
         </div>

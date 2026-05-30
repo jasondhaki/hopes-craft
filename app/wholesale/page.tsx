@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Globe, Anchor, Package } from "lucide-react";
+import { sendWholesaleEmail } from "../actions/wholesale";
 
 export default function WholesalePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,23 +30,26 @@ export default function WholesalePage() {
     setErrorMessage("");
 
     try {
-      // Send the data to our secure API route
-      const response = await fetch('/api/wholesale', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // 1. Package your React state into a FormData object
+      const data = new FormData();
+      data.append("firstName", formData.firstName);
+      data.append("lastName", formData.lastName);
+      data.append("email", formData.email);
+      data.append("company", formData.company);
+      data.append("port", formData.port);
+      data.append("volume", formData.volume);
+      data.append("details", formData.details);
 
-      const result = await response.json();
+      // 2. Send it to our secure Server Action
+      const result = await sendWholesaleEmail(data);
 
-      if (response.ok) {
+      if (result.success) {
         setSubmitted(true);
       } else {
         setErrorMessage(result.error || "Something went wrong.");
       }
     } catch (error) {
+      console.error(error);
       setErrorMessage("Network error. Please try again.");
     } finally {
       setIsSubmitting(false);

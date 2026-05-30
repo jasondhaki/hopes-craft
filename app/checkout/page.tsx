@@ -5,7 +5,8 @@ import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import { createOrder } from "../actions/checkout";
 
 export default function CheckoutPage() {
   const { cartItems, subtotalBDT, subtotalUSD, clearCart } = useCart();
@@ -14,9 +15,22 @@ export default function CheckoutPage() {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
 
-  // Shipping Logic: Flat rate based on currency/region for the dummy implementation
+  // Form State
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    street: "",
+    city: "",
+    zip: "",
+  });
+
+  // Shipping Logic: Flat rate based on currency/region
   const shippingBDT = 120; // ৳120 domestic shipping
   const shippingUSD = 25;  // $25 international shipping
 
@@ -24,8 +38,12 @@ export default function CheckoutPage() {
   const displayShipping = currency === "USD" ? shippingUSD : shippingBDT;
   const displayTotal = displaySubtotal + displayShipping;
 
-  // Handle the dummy checkout process
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle the live checkout process
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!paymentMethod) {
       alert("Please select a payment method.");
@@ -33,13 +51,47 @@ export default function CheckoutPage() {
     }
 
     setIsProcessing(true);
+    setError("");
 
-    // Simulate API call to payment gateway
-    setTimeout(() => {
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      const fullAddress = `${formData.street}, ${formData.city}, ${formData.zip}`.trim();
+
+      // 1. Package the order data
+      const orderData = {
+        name: fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: fullAddress,
+        total: displayTotal,
+        currency: currency,
+        items: cartItems.map((item: any) => ({
+          _id: item._id,
+          quantity: item.quantity,
+          priceUSD: item.priceUSD,
+          priceBDT: item.priceBDT
+        }))
+      };
+
+      // 2. Send it securely to Sanity via our Server Action with explicit typing
+      const result = (await createOrder(orderData)) as { 
+        success: boolean; 
+        orderId?: string; 
+        error?: string 
+      };
+
+      if (result.success && result.orderId) {
+        setSuccessOrderId(result.orderId);
+        setOrderPlaced(true);
+        if (clearCart) clearCart(); // Empty the cart on success
+      } else {
+        setError(result.error || "Failed to place order.");
+      }
+    } catch (err) {
+      setError("A network error occurred. Please try again.");
+    } finally {
       setIsProcessing(false);
-      setOrderPlaced(true);
-      clearCart(); // Empty the cart on success
-    }, 2000);
+    }
   };
 
   // Success Screen
@@ -48,15 +100,20 @@ export default function CheckoutPage() {
       <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
         <CheckCircle size={64} className="text-green-600 mb-6" />
         <h1 className="font-serif text-4xl md:text-5xl font-bold text-forest-slate mb-4">Order Confirmed</h1>
-        <p className="font-sans text-lg text-gray-600 mb-8 max-w-lg">
+        <p className="font-sans text-lg text-gray-600 mb-2 max-w-lg">
           Thank you for supporting Hope's Craft. Your order is being processed and you will receive an email confirmation shortly.
         </p>
-        <Link 
-          href="/shop" 
-          className="bg-forest-slate text-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-terracotta transition-colors"
-        >
-          Continue Shopping
-        </Link>
+        <p className="font-sans text-sm font-bold text-forest-slate mb-8 bg-gray-50 py-3 px-6 rounded-sm border border-gray-200 shadow-sm inline-block">
+          Order ID: <span className="text-terracotta">{successOrderId}</span>
+        </p>
+        <div>
+          <Link 
+            href="/shop" 
+            className="bg-forest-slate text-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-terracotta transition-colors"
+          >
+            Continue Shopping
+          </Link>
+        </div>
       </div>
     );
   }
@@ -89,18 +146,26 @@ export default function CheckoutPage() {
           
           {/* Left: Checkout Form */}
           <div className="lg:col-span-7">
+            
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm font-sans rounded-sm">
+                {error}
+              </div>
+            )}
+
             <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-12">
               
               {/* 1. Shipping Details */}
               <section>
                 <h2 className="font-sans text-lg font-bold text-forest-slate uppercase tracking-widest mb-6 border-b border-gray-200 pb-2">Shipping Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <input type="text" placeholder="First Name" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
-                  <input type="text" placeholder="Last Name" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
-                  <input type="email" placeholder="Email Address" required className="w-full sm:col-span-2 border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
-                  <input type="text" placeholder="Street Address" required className="w-full sm:col-span-2 border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
-                  <input type="text" placeholder="City" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
-                  <input type="text" placeholder="Postal / Zip Code" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email Address" required className="w-full sm:col-span-2 border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required className="w-full sm:col-span-2 border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="text" name="street" value={formData.street} onChange={handleChange} placeholder="Street Address" required className="w-full sm:col-span-2 border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="City" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
+                  <input type="text" name="zip" value={formData.zip} onChange={handleChange} placeholder="Postal / Zip Code" required className="w-full border border-gray-300 p-3 rounded-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" />
                 </div>
               </section>
 
@@ -150,7 +215,7 @@ export default function CheckoutPage() {
               
               {/* Item List (Scrollable if many items) */}
               <div className="max-h-64 overflow-y-auto pr-2 mb-6 space-y-4">
-                {cartItems.map((item) => (
+                {cartItems.map((item: any) => (
                   <div key={item._id} className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-white border border-gray-200 rounded-sm overflow-hidden flex-shrink-0">
                       {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />}
@@ -191,7 +256,7 @@ export default function CheckoutPage() {
                 className="w-full mt-8 bg-forest-slate text-white py-4 text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-terracotta transition-colors flex items-center justify-center space-x-2 rounded-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isProcessing ? (
-                  <span>Processing...</span>
+                  <><Loader2 size={16} className="animate-spin" /><span>Processing...</span></>
                 ) : (
                   <span>Place Order</span>
                 )}

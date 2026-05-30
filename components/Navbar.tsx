@@ -2,14 +2,20 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { ShoppingBag, Menu, X, Search, User, Loader2 } from "lucide-react";
+import { ShoppingBag, Menu, X, Search, User, Loader2, Shield } from "lucide-react"; // <-- 1. Imported Shield icon
 import { useCurrency } from "../context/CurrencyContext";
 import { useCart } from "../context/CartContext";
 import { searchProducts } from "../app/actions/search";
+import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs"; // <-- 2. Imported useUser
 
 export default function Navbar() {
   const { currency, toggleCurrency } = useCurrency();
   const { totalItems } = useCart();
+  
+  // 3. Fetch current logged-in user data from Clerk
+  const { user } = useUser();
+  // 4. Check if the current user's email matches the Admin email in your .env.local
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -34,7 +40,7 @@ export default function Navbar() {
         setSearchResults([]);
         setShowDropdown(false);
       }
-    }, 300); // Waits 300ms after typing stops before searching
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
@@ -50,14 +56,12 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Helper to close search when clicking a result
   const closeSearch = () => {
     setShowDropdown(false);
     setSearchTerm("");
     setIsMobileMenuOpen(false);
   };
 
-  // Reusable Search Dropdown Component
   const SearchDropdown = () => {
     if (!showDropdown) return null;
 
@@ -110,16 +114,13 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full flex flex-col shadow-sm">
-      {/* Top Announcement Bar - Pure Black */}
       <div className="bg-black text-white text-xs py-2 px-4 text-center font-sans tracking-wide font-medium">
         Global Shipping Available | 100% Biodegradable Jute
       </div>
 
-      {/* Main Navigation - Pure White */}
       <nav className="bg-white border-b border-gray-200 relative">
         <div className="container mx-auto px-4 lg:px-6 py-4 flex justify-between items-center">
           
-          {/* Mobile Menu Button (Left on mobile) */}
           <button 
             className="lg:hidden p-2 -ml-2 text-black hover:text-terracotta transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -127,7 +128,6 @@ export default function Navbar() {
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          {/* Brand Logo & Placeholder */}
           <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3 group">
             <div className="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-black font-serif text-lg leading-none transition-transform group-hover:scale-105">
               HC
@@ -137,7 +137,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-8 font-sans">
             <Link href="/" className="text-sm font-semibold text-black hover:text-terracotta transition-colors">Home</Link>
             <Link href="/shop" className="text-sm font-semibold text-black hover:text-terracotta transition-colors">Shop</Link>
@@ -146,10 +145,8 @@ export default function Navbar() {
             <Link href="/contact" className="text-sm font-semibold text-black hover:text-terracotta transition-colors">Contact Us</Link>
           </div>
 
-          {/* Right Utilities Container */}
           <div className="flex items-center space-x-4 lg:space-x-6">
             
-            {/* Desktop Search Bar */}
             <div className="relative hidden md:block group" ref={searchRef}>
               <Search size={18} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${showDropdown || searchTerm ? 'text-terracotta' : 'text-gray-400 group-focus-within:text-terracotta'}`} />
               <input 
@@ -163,7 +160,6 @@ export default function Navbar() {
               <SearchDropdown />
             </div>
 
-            {/* Currency Switcher */}
             <button 
               onClick={toggleCurrency}
               className="hidden sm:flex items-center space-x-1 text-sm font-bold text-black hover:text-terracotta transition-colors"
@@ -173,12 +169,39 @@ export default function Navbar() {
               <span>{currency}</span>
             </button>
 
-            {/* User Account Icon */}
-            <button className="hidden sm:block p-1 text-black hover:text-terracotta transition-colors">
-              <User size={22} strokeWidth={1.5} />
-            </button>
+            {/* Desktop Clerk User Authentication with Admin Panel */}
+            <div className="hidden sm:flex items-center justify-center">
+              <Show when="signed-out">
+                <SignInButton mode="modal">
+                  <button className="p-1 text-black hover:text-terracotta transition-colors" title="Sign In">
+                    <User size={22} strokeWidth={1.5} />
+                  </button>
+                </SignInButton>
+              </Show>
+              <Show when="signed-in">
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8 border-2 border-transparent hover:border-terracotta transition-colors"
+                    }
+                  }}
+                >
+                  <UserButton.MenuItems>
+                    {/* 5. Dynamically inject the Admin route if they match */}
+                    {isAdmin && (
+                      <UserButton.Link
+                        label="Admin Dashboard"
+                        labelIcon={<Shield size={16} className="text-terracotta" />}
+                        href="/studio"
+                      />
+                    )}
+                    <UserButton.Action label="manageAccount" />
+                    <UserButton.Action label="signOut" />
+                  </UserButton.MenuItems>
+                </UserButton>
+              </Show>
+            </div>
             
-            {/* Cart Icon & Live Badge */}
             <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="relative p-1 text-black hover:text-terracotta transition-colors">
               <ShoppingBag size={22} strokeWidth={1.5} />
               <span className="absolute -top-1 -right-1 bg-terracotta text-white text-[10px] font-bold rounded-full h-[18px] w-[18px] flex items-center justify-center border-2 border-white">
@@ -192,7 +215,6 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-6 flex flex-col space-y-5 font-sans shadow-lg absolute w-full z-50">
             
-            {/* Mobile Search Bar */}
             <div className="relative w-full mb-2" ref={searchRef}>
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input 
@@ -219,10 +241,37 @@ export default function Navbar() {
                 <span className="text-xl leading-none font-serif font-medium">{currency === "USD" ? "$" : "৳"}</span>
                 <span>{currency}</span>
               </button>
-              <button className="flex items-center space-x-2 text-black font-semibold">
-                <User size={20} strokeWidth={1.5} />
-                <span>Account</span>
-              </button>
+
+              {/* Mobile Clerk User Authentication with Admin Panel */}
+              <div className="flex items-center">
+                <Show when="signed-out">
+                  <SignInButton mode="modal">
+                    <button className="flex items-center space-x-2 text-black font-semibold hover:text-terracotta transition-colors">
+                      <User size={20} strokeWidth={1.5} />
+                      <span>Sign In</span>
+                    </button>
+                  </SignInButton>
+                </Show>
+                <Show when="signed-in">
+                  <div className="flex items-center space-x-3 text-black font-semibold">
+                    <span>Profile</span>
+                    <UserButton>
+                      <UserButton.MenuItems>
+                        {isAdmin && (
+                          <UserButton.Link
+                            label="Admin Dashboard"
+                            labelIcon={<Shield size={16} className="text-terracotta" />}
+                            href="/studio"
+                          />
+                        )}
+                        <UserButton.Action label="manageAccount" />
+                        <UserButton.Action label="signOut" />
+                      </UserButton.MenuItems>
+                    </UserButton>
+                  </div>
+                </Show>
+              </div>
+              
             </div>
           </div>
         )}

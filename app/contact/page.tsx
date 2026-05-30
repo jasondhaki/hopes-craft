@@ -24,14 +24,12 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // 1. Package your React state into a FormData object
       const data = new FormData();
       data.append("name", formData.name);
       data.append("email", formData.email);
       data.append("subject", formData.subject);
       data.append("message", formData.message);
 
-      // 2. Send it to the server action
       const result = await sendContactEmail(data);
 
       if (result.success) {
@@ -71,13 +69,23 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col w-full bg-white text-black min-h-screen">
       
-      {/* Hero Section */}
-      <section className="bg-jute-base pt-24 pb-16 px-6 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6 tracking-tighter text-forest-slate">
-            Get in <span className="text-terracotta italic font-light">Touch</span>
+      {/* UPDATED: Hero Section with Background Image & Glassmorphism */}
+      <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
+        {/* Background Image & Light Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/bg.jpg" 
+            alt="Artisan workspace" 
+            className="w-full h-full object-cover opacity-80" 
+          />    
+          <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tighter text-forest-slate drop-shadow-sm">
+            Get in <span className="text-[#E2725B] italic font-light">Touch</span>
           </h1>
-          <p className="font-sans text-lg text-forest-slate/80 max-w-2xl mx-auto">
+          <p className="font-sans text-lg md:text-xl text-forest-slate/90 max-w-2xl mx-auto font-medium drop-shadow-sm">
             Whether you have a question about our sustainable jute products, shipping, or our artisan stories, we are here to help.
           </p>
         </div>

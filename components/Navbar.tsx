@@ -39,7 +39,7 @@ export default function Navbar() {
               HC
             </div>
             <span className="font-serif text-2xl font-bold text-black tracking-tight hidden sm:block">
-              Hope's<span className="text-terracotta italic font-light ml-1">Craft</span>
+              Hope's<span className="text-[#E2725B] italic font-light ml-1">Craft</span>
             </span>
           </Link>
 

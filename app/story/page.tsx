@@ -40,18 +40,30 @@ export default function StoryPage() {
   return (
     <div className="flex flex-col w-full bg-white text-black">
       
-      {/* 1. Hero Header Section */}
-      <section className="pt-24 pb-16 px-6 text-center max-w-4xl mx-auto">
-        <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tighter text-forest-slate">
-          Our <span className="text-terracotta italic font-light">Story</span>
-        </h1>
-        <p className="font-sans text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-          Rooted in the heart of Bangladesh, Hope's Craft is a tribute to generations of artisans weaving the golden fiber of Bengal into sustainable art.
-        </p>
+      {/* 1. UPDATED: Hero Header Section with Background Image */}
+      <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
+        {/* Background Image & Light Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/bg.jpg" 
+            alt="Hope's Craft Heritage" 
+            className="w-full h-full object-cover opacity-80" 
+          />    
+          <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tighter text-forest-slate drop-shadow-sm">
+            Our <span className="text-[#E2725B] italic font-light">Story</span>
+          </h1>
+          <p className="font-sans text-lg md:text-xl text-forest-slate/90 font-medium leading-relaxed max-w-2xl mx-auto drop-shadow-sm">
+            Rooted in the heart of Bangladesh, Hope's Craft is a tribute to generations of artisans weaving Jute into sustainable art.
+          </p>
+        </div>
       </section>
 
       {/* 2. Premium Bento-Box Image Gallery */}
-      <section className="px-4 md:px-8 pb-24 max-w-7xl mx-auto w-full">
+      <section className="py-20 px-4 md:px-8 pb-24 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:auto-rows-[160px]">
           {galleryImages.map((image, index) => (
             <div key={index} className={`relative overflow-hidden rounded-sm bg-gray-100 group ${image.span}`}>
@@ -118,7 +130,7 @@ export default function StoryPage() {
         </div>
       </section>
 
-      {/* 5. Artisan Spotlight - SEPARATED WITH SOFT GRAY AND BORDER */}
+      {/* 5. Artisan Spotlight */}
       <section className="bg-gray-50 py-24 px-6 text-forest-slate border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -141,52 +153,61 @@ export default function StoryPage() {
         </div>
       </section>
 
-      {/* 6. Transparency Process */}
-      <section className="bg-jute-base py-24 px-6 text-forest-slate overflow-hidden border-t border-jute-base/50">
-        <div className="max-w-7xl mx-auto">
+      {/* 6. UPDATED: Transparency Process with Background Image */}
+      <section className="relative py-24 px-6 text-forest-slate overflow-hidden border-t border-jute-base/50">
+        {/* Background Image & Frosted Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/process-bg.jpg" 
+            alt="Jute harvesting process" 
+            className="w-full h-full object-cover opacity-70"
+          />
+          <div className="absolute inset-0 bg-[#f5e8ce]/60 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-20">
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4">From Earth to Home</h2>
-            <p className="font-sans text-forest-slate/70">Our transparent, 4-step sustainable supply chain.</p>
+            <p className="font-sans text-forest-slate/80 font-medium">Our transparent, 4-step sustainable supply chain.</p>
           </div>
 
           <div className="relative flex flex-col md:flex-row justify-between items-center md:items-start gap-12 md:gap-4">
-            {/* Horizontal connecting line (Desktop only) */}
             <div className="hidden md:block absolute top-8 left-12 right-12 h-px bg-forest-slate/20 z-0"></div>
 
             {/* Step 1 */}
             <div className="relative z-10 flex flex-col items-center text-center w-full md:w-1/4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-forest-slate/10 text-terracotta">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-md border border-forest-slate/10 text-terracotta transform hover:scale-110 transition-transform">
                 <Sun size={24} />
               </div>
               <h4 className="font-sans font-bold uppercase tracking-widest text-sm mb-3">1. Sun-Cured Harvesting</h4>
-              <p className="font-sans text-sm text-forest-slate/70">Raw jute is harvested by local farmers and naturally dried under the Bengal sun without chemicals.</p>
+              <p className="font-sans text-sm text-forest-slate/80 font-medium px-2">Raw jute is harvested by local farmers and naturally dried under the Bengal sun without chemicals.</p>
             </div>
 
             {/* Step 2 */}
             <div className="relative z-10 flex flex-col items-center text-center w-full md:w-1/4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-forest-slate/10 text-terracotta">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-md border border-forest-slate/10 text-terracotta transform hover:scale-110 transition-transform">
                 <Scissors size={24} />
               </div>
               <h4 className="font-sans font-bold uppercase tracking-widest text-sm mb-3">2. Processing & Spinning</h4>
-              <p className="font-sans text-sm text-forest-slate/70">The raw fibers are meticulously combed, softened, and spun into strong, durable threads.</p>
+              <p className="font-sans text-sm text-forest-slate/80 font-medium px-2">The raw fibers are meticulously combed, softened, and spun into strong, durable threads.</p>
             </div>
 
             {/* Step 3 */}
             <div className="relative z-10 flex flex-col items-center text-center w-full md:w-1/4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-forest-slate/10 text-terracotta">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-md border border-forest-slate/10 text-terracotta transform hover:scale-110 transition-transform">
                 <PenTool size={24} />
               </div>
               <h4 className="font-sans font-bold uppercase tracking-widest text-sm mb-3">3. Artisan Weaving</h4>
-              <p className="font-sans text-sm text-forest-slate/70">Master weavers hand-craft the threads into beautiful, functional designs using generational techniques.</p>
+              <p className="font-sans text-sm text-forest-slate/80 font-medium px-2">Master weavers hand-craft the threads into beautiful, functional designs using generational techniques.</p>
             </div>
 
             {/* Step 4 */}
             <div className="relative z-10 flex flex-col items-center text-center w-full md:w-1/4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-forest-slate/10 text-terracotta">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-md border border-forest-slate/10 text-terracotta transform hover:scale-110 transition-transform">
                 <Package size={24} />
               </div>
               <h4 className="font-sans font-bold uppercase tracking-widest text-sm mb-3">4. Eco-Packaging</h4>
-              <p className="font-sans text-sm text-forest-slate/70">Products are inspected for quality and shipped globally using 100% biodegradable packaging.</p>
+              <p className="font-sans text-sm text-forest-slate/80 font-medium px-2">Products are inspected for quality and shipped globally using 100% biodegradable packaging.</p>
             </div>
           </div>
         </div>
@@ -225,26 +246,41 @@ export default function StoryPage() {
             </div>
           </div>
 
-          {/* Final Call to Action Box */}
-          <div className="bg-forest-slate text-white p-12 text-center rounded-sm shadow-2xl">
-            <h3 className="font-serif text-3xl font-bold mb-4 italic">Be Part of the Story</h3>
-            <p className="font-sans text-gray-300 mb-8 max-w-xl mx-auto">
-              Every purchase preserves a craft, protects the planet, and empowers an artisan.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link 
-                href="/shop" 
-                className="bg-white text-black px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-terracotta hover:text-white transition-colors flex items-center justify-center space-x-2"
-              >
-                <span>Shop the Collection</span>
-              </Link>
-              <Link 
-                href="/wholesale" 
-                className="bg-transparent border border-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors flex items-center justify-center"
-              >
-                Wholesale Inquiry
-              </Link>
+          {/* Final Call to Action Box with Background Image */}
+          <div className="relative text-white p-12 text-center rounded-sm shadow-2xl overflow-hidden">
+            
+            {/* Background Texture & Dark Overlay */}
+            <div className="absolute inset-0 z-0">
+              <img 
+                src="/images/story-cta-bg.jpg" 
+                alt="Jute weaving texture" 
+                className="w-full h-full object-cover opacity-90"
+              />
+              <div className="absolute inset-0 bg-forest-slate/60 backdrop-blur-[2px]"></div>
             </div>
+
+            {/* Content Core */}
+            <div className="relative z-10">
+              <h3 className="font-serif text-3xl font-bold mb-4 italic">Be Part of the Story</h3>
+              <p className="font-sans text-gray-300 mb-8 max-w-xl mx-auto">
+                Every purchase preserves a craft, protects the planet, and empowers an artisan.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <Link 
+                  href="/shop" 
+                  className="bg-white text-black px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-terracotta hover:text-white transition-colors flex items-center justify-center space-x-2"
+                >
+                  <span>Shop the Collection</span>
+                </Link>
+                <Link 
+                  href="/wholesale" 
+                  className="bg-transparent border border-white px-8 py-4 rounded-sm font-sans font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors flex items-center justify-center"
+                >
+                  Wholesale Inquiry
+                </Link>
+              </div>
+            </div>
+            
           </div>
 
         </div>

@@ -82,13 +82,24 @@ export default function WholesalePage() {
   return (
     <div className="flex flex-col w-full bg-white text-black min-h-screen">
       
-      <section className="bg-forest-slate pt-24 pb-20 px-6 text-center text-white">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6 tracking-tight">
-            Global <span className="text-terracotta italic font-light">Partnerships</span>
+      {/* UPDATED: Hero Section with Background Image & Dark Glassmorphism */}
+      <section className="relative pt-32 pb-24 px-6 text-center text-white overflow-hidden">
+        {/* Background Image & Dark Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/bg.jpg" 
+            alt="Global Shipping & Wholesale" 
+            className="w-full h-full object-cover opacity-80" 
+          />    
+          <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10">
+          <h1 className="font-serif text-forest-slate text-5xl md:text-7xl font-bold mb-6 tracking-tight drop-shadow-sm">
+            Global <span className="text-[#E2725B] italic font-light">Partnerships</span>
           </h1>
-          <p className="font-sans text-lg md:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
-            Bring the heritage of authentic Bengali jute to your retail stores. We supply sustainable, handcrafted goods to boutiques and distributors worldwide.
+          <p className="font-sans text-lg md:text-xl text-forest-slate/90 font-medium leading-relaxed max-w-2xl mx-auto drop-shadow-sm">
+            Bring the heritage of authentic Bengali jute to your stores. We supply sustainable, handcrafted goods to boutiques and distributors worldwide.
           </p>
         </div>
       </section>

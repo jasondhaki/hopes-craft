@@ -26,16 +26,26 @@ export default function RefundPage() {
   return (
     <div className="flex flex-col w-full bg-white text-black min-h-screen">
       
-      {/* Premium Header Section */}
-      <section className="bg-jute-base pt-24 pb-20 px-6 text-center border-b border-gray-200">
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
+      {/* UPDATED: Premium Header Section with Background Image */}
+      <section className="relative pt-32 pb-24 px-6 text-center border-b border-gray-200 overflow-hidden">
+        {/* Background Image & Light Glass Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/bg.jpg" 
+            alt="Refund and Return Policy" 
+            className="w-full h-full object-cover opacity-80" 
+          />    
+          <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto flex flex-col items-center relative z-10">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-terracotta shadow-sm mb-6">
             <RefreshCcw size={28} strokeWidth={1.5} />
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-6 tracking-tight text-forest-slate">
-            Refund & <span className="text-terracotta italic font-light">Return Policy</span>
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tight text-forest-slate drop-shadow-sm">
+            Refund & <span className="text-[#E2725B] italic font-light">Return Policy</span>
           </h1>
-          <p className="font-sans text-lg text-forest-slate/80 max-w-2xl mx-auto">
+          <p className="font-sans text-lg md:text-xl text-forest-slate/90 max-w-2xl mx-auto font-medium drop-shadow-sm">
             Our commitment to quality, sustainable craftsmanship, and your absolute satisfaction.
           </p>
         </div>

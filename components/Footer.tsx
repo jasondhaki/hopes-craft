@@ -31,14 +31,26 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-forest-slate text-jute-base pt-20 pb-10">
-      <div className="container mx-auto px-6 max-w-7xl">
+    <footer className="relative text-jute-base pt-20 pb-10 overflow-hidden">
+      
+      {/* Background Image & Premium Dark Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/images/footer-bg.jpg" 
+          alt="Footer background texture" 
+          className="w-full h-full object-cover opacity-60"
+        />
+        {/* Heavy forest-slate overlay to ensure text remains perfectly readable */}
+        <div className="absolute inset-0 bg-forest-slate/80 backdrop-blur-[1px]"></div>
+      </div>
+
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           
           {/* Column 1: Brand & Social */}
           <div className="flex flex-col space-y-6">
             <Link href="/" className="font-serif text-3xl font-bold text-white tracking-tight">
-              Hope's<span className="text-terracotta italic font-light ml-1">Craft</span>
+              Hope's<span className="text-[#E2725B] italic font-light ml-1">Craft</span>
             </Link>
             <p className="font-sans text-sm text-gray-300 leading-relaxed pr-4">
               Empowering artisans and sharing the heritage of sustainable jute commerce with the world.
@@ -85,7 +97,7 @@ export default function Footer() {
           {/* Column 4: Newsletter */}
           <div className="flex flex-col space-y-4">
             <h4 className="font-sans font-bold text-white uppercase tracking-widest text-xs mb-2">Join Our Journey</h4>
-            <p className="font-sans text-sm text-gray-300 mb-2">
+            <p className="font-sans text-sm text-gray-200 mb-2">
               Subscribe for updates on new artisan collections and exclusive B2B offers.
             </p>
             
@@ -104,7 +116,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email address"
-                  className="w-full bg-forest-slate border border-gray-500 p-3 rounded-sm text-sm text-white focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta transition-colors placeholder:text-gray-400"
+                  className="w-full bg-forest-slate/50 border border-gray-500 p-3 rounded-sm text-sm text-white focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta transition-colors placeholder:text-gray-400"
                 />
                 
                 {status === "error" && (
@@ -127,15 +139,15 @@ export default function Footer() {
 
         {/* Bottom Bar: Copyright & Dummy Payments */}
         <div className="border-t border-gray-600/50 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="font-sans text-xs text-gray-400">
+          <p className="font-sans text-xs text-white">
             © {new Date().getFullYear()} Hope's Craft. All rights reserved.
           </p>
-          <div className="flex items-center space-x-4 text-xs font-sans text-gray-400 uppercase tracking-widest">
-            <span className="hover:text-gray-200 transition-colors cursor-default">Stripe</span>
+          <div className="flex items-center space-x-4 text-xs font-sans text-white uppercase tracking-widest">
+            <span className="hover:text-gray-400 transition-colors cursor-default">Stripe</span>
             <span>•</span>
-            <span className="hover:text-gray-200 transition-colors cursor-default">SSLCommerz</span>
+            <span className="hover:text-gray-400 transition-colors cursor-default">SSLCommerz</span>
             <span>•</span>
-            <span className="hover:text-gray-200 transition-colors cursor-default">bKash</span>
+            <span className="hover:text-gray-400 transition-colors cursor-default">bKash</span>
           </div>
         </div>
       </div>

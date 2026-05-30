@@ -57,7 +57,7 @@ export default function CheckoutPage() {
       const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       const fullAddress = `${formData.street}, ${formData.city}, ${formData.zip}`.trim();
 
-      // 1. Package the order data
+      // 1. Package the order data for Sanity
       const orderData = {
         name: fullName,
         email: formData.email,
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
         }))
       };
 
-      // 2. Send it securely to Sanity via our Server Action with explicit typing
+      // 2. Save Order to Sanity First (Creates a record we can reference)
       const result = (await createOrder(orderData)) as { 
         success: boolean; 
         orderId?: string; 
@@ -81,20 +81,61 @@ export default function CheckoutPage() {
       };
 
       if (result.success && result.orderId) {
+        
+        // ==========================================
+        // 3. STRIPE PAYMENT INTERCEPTION
+        // ==========================================
+        if (paymentMethod === "stripe") {
+          try {
+            const stripeResponse = await fetch("/api/checkout/stripe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                items: cartItems,
+                orderId: result.orderId,
+              }),
+            });
+
+            const stripeData = await stripeResponse.json();
+
+            if (stripeData.url) {
+              if (clearCart) clearCart(); // Clear cart before they leave
+              // Redirect the user to Stripe's secure hosted checkout
+              window.location.href = stripeData.url;
+              return; // Stop execution here!
+            } else {
+              setError(stripeData.error || "Failed to initialize Stripe checkout.");
+              setIsProcessing(false);
+              return;
+            }
+          } catch (stripeErr) {
+            setError("Failed to connect to the payment gateway.");
+            setIsProcessing(false);
+            return;
+          }
+        }
+        
+        // ==========================================
+        // 4. FALLBACK FOR OTHER METHODS (COD, bKash)
+        // ==========================================
         setSuccessOrderId(result.orderId);
         setOrderPlaced(true);
         if (clearCart) clearCart(); // Empty the cart on success
+
       } else {
         setError(result.error || "Failed to place order.");
       }
     } catch (err) {
       setError("A network error occurred. Please try again.");
     } finally {
-      setIsProcessing(false);
+      // Only turn off processing if we didn't redirect to Stripe
+      if (paymentMethod !== "stripe") {
+        setIsProcessing(false);
+      }
     }
   };
 
-  // Success Screen
+  // Success Screen (Used for COD/bKash - Stripe has its own success page!)
   if (orderPlaced) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">

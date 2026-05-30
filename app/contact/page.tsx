@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
+import { sendContactEmail } from "../actions/contact";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,11 +23,28 @@ export default function ContactPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulating a network request for the general contact form
-    setTimeout(() => {
+    try {
+      // 1. Package your React state into a FormData object
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("subject", formData.subject);
+      data.append("message", formData.message);
+
+      // 2. Send it to the server action
+      const result = await sendContactEmail(data);
+
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        alert("Failed to send message: " + result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error occurred.");
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 1200);
+    }
   };
 
   if (submitted) {

@@ -1,8 +1,8 @@
 import { client } from "../../lib/sanity";
-import ProductCard from "../../components/ProductCard";
+import ShopFilter from "../../components/ShopFilter"; // IMPORT THE NEW COMPONENT
 
-// The GROQ Query: Updated to pull 'name' as well as 'title'
-const query = `*[_type == "product"] | order(_createdAt desc) {
+// Fetch all products
+const productsQuery = `*[_type == "product"] | order(_createdAt desc) {
   _id,
   title,
   name,
@@ -13,15 +13,24 @@ const query = `*[_type == "product"] | order(_createdAt desc) {
   "category": category->title
 }`;
 
+// Fetch all categories to dynamically generate the filter tabs
+const categoriesQuery = `*[_type == "category"] | order(title asc) {
+  title
+}`;
+
 export const revalidate = 30;
 
 export default async function ShopPage() {
-  const products = await client.fetch(query);
+  const products = await client.fetch(productsQuery);
+  const rawCategories = await client.fetch(categoriesQuery);
+  
+  // Clean up the Sanity category objects into a simple array of strings
+  const categories = rawCategories.map((cat: any) => cat.title).filter(Boolean);
 
   return (
     <div className="flex flex-col w-full bg-white text-black min-h-screen">
       
-      {/* UPDATED: Header with Background Image & Glassmorphism */}
+      {/* Header with Background Image & Glassmorphism */}
       <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
         {/* Background Image & Light Glass Overlay */}
         <div className="absolute inset-0 z-0">
@@ -43,14 +52,11 @@ export default async function ShopPage() {
         </div>
       </section>
 
-      {/* Product Grid */}
-      <section className="py-20 px-6 max-w-7xl mx-auto w-full">
+      {/* Product Grid & Filter System */}
+      <section className="py-16 px-6 max-w-7xl mx-auto w-full">
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {products.map((product: any) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
+          // PASS DATA TO OUR NEW INTERACTIVE CLIENT COMPONENT
+          <ShopFilter products={products} categories={categories} />
         ) : (
           <div className="text-center py-20">
             <h2 className="font-serif text-2xl text-gray-400 mb-4">No products found.</h2>

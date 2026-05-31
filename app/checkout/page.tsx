@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image"; // <-- Added for Order Summary optimization
 import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../context/CurrencyContext";
 import { useRouter } from "next/navigation";
@@ -99,10 +100,9 @@ export default function CheckoutPage() {
             const stripeData = await stripeResponse.json();
 
             if (stripeData.url) {
-              if (clearCart) clearCart(); // Clear cart before they leave
-              // Redirect the user to Stripe's secure hosted checkout
+              if (clearCart) clearCart(); 
               window.location.href = stripeData.url;
-              return; // Stop execution here!
+              return; 
             } else {
               setError(stripeData.error || "Failed to initialize Stripe checkout.");
               setIsProcessing(false);
@@ -114,9 +114,47 @@ export default function CheckoutPage() {
             return;
           }
         }
+
+        // ==========================================
+        // 4. SSLCOMMERZ / bKash PAYMENT INTERCEPTION
+        // ==========================================
+        if (paymentMethod === "sslcommerz" || paymentMethod === "bkash") {
+          try {
+            const sslResponse = await fetch("/api/checkout/sslcommerz", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: result.orderId,
+                totalBDT: displayTotal,
+                customerData: {
+                  name: fullName,
+                  email: formData.email,
+                  phone: formData.phone,
+                  address: fullAddress
+                }
+              }),
+            });
+
+            const sslData = await sslResponse.json();
+
+            if (sslData.url) {
+              if (clearCart) clearCart(); 
+              window.location.href = sslData.url;
+              return; 
+            } else {
+              setError(sslData.error || "Failed to initialize SSLCommerz checkout.");
+              setIsProcessing(false);
+              return;
+            }
+          } catch (sslErr) {
+            setError("Failed to connect to the local payment gateway.");
+            setIsProcessing(false);
+            return;
+          }
+        }
         
         // ==========================================
-        // 4. FALLBACK FOR OTHER METHODS (COD, bKash)
+        // 5. FALLBACK FOR COD
         // ==========================================
         setSuccessOrderId(result.orderId);
         setOrderPlaced(true);
@@ -128,14 +166,14 @@ export default function CheckoutPage() {
     } catch (err) {
       setError("A network error occurred. Please try again.");
     } finally {
-      // Only turn off processing if we didn't redirect to Stripe
-      if (paymentMethod !== "stripe") {
+      // Only turn off processing if we didn't redirect to a payment gateway
+      if (paymentMethod !== "stripe" && paymentMethod !== "sslcommerz" && paymentMethod !== "bkash") {
         setIsProcessing(false);
       }
     }
   };
 
-  // Success Screen (Used for COD/bKash - Stripe has its own success page!)
+  // Success Screen (Used for COD - Stripe and SSLCommerz have their own redirects)
   if (orderPlaced) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
@@ -254,12 +292,21 @@ export default function CheckoutPage() {
             <div className="bg-gray-50 p-8 rounded-sm sticky top-32 border border-gray-100">
               <h2 className="font-serif text-2xl font-bold text-forest-slate mb-6">Order Summary</h2>
               
-              {/* Item List (Scrollable if many items) */}
+              {/* Item List */}
               <div className="max-h-64 overflow-y-auto pr-2 mb-6 space-y-4">
                 {cartItems.map((item: any) => (
                   <div key={item._id} className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-white border border-gray-200 rounded-sm overflow-hidden flex-shrink-0">
-                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />}
+                    {/* UPDATED: Next.js Image Component for Cart Thumbnails */}
+                    <div className="relative w-16 h-16 bg-white border border-gray-200 rounded-sm overflow-hidden flex-shrink-0">
+                      {item.imageUrl && (
+                        <Image 
+                          src={item.imageUrl} 
+                          alt={item.title} 
+                          fill 
+                          sizes="64px"
+                          className="object-cover" 
+                        />
+                      )}
                     </div>
                     <div className="flex flex-col flex-grow text-sm">
                       <span className="font-bold text-forest-slate line-clamp-1">{item.title}</span>

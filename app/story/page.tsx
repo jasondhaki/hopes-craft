@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { 
   ArrowRight, Globe, Leaf, HeartHandshake, 
   Sun, Scissors, PenTool, Package 
@@ -44,10 +45,12 @@ export default function StoryPage() {
       <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
         {/* Background Image & Light Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/bg.jpg" 
             alt="Hope's Craft Heritage" 
-            className="w-full h-full object-cover opacity-80" 
+            fill
+            priority
+            className="object-cover opacity-80" 
           />    
           <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
         </div>
@@ -67,11 +70,13 @@ export default function StoryPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:auto-rows-[160px]">
           {galleryImages.map((image, index) => (
             <div key={index} className={`relative overflow-hidden rounded-sm bg-gray-100 group ${image.span}`}>
-              <img
+              <Image
                 src={image.src}
                 alt={`Hope's Craft process ${index + 1}`}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                loading="lazy"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                priority={index < 2} 
               />
             </div>
           ))}
@@ -141,8 +146,14 @@ export default function StoryPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {artisans.map((artisan, index) => (
               <div key={index} className="flex flex-col items-center text-center group">
-                <div className="w-40 h-40 rounded-full overflow-hidden mb-6 border-4 border-terracotta/20 group-hover:border-terracotta transition-colors bg-white shadow-sm">
-                  <img src={artisan.image} alt={artisan.name} className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-500" />
+                <div className="relative w-40 h-40 rounded-full overflow-hidden mb-6 border-4 border-terracotta/20 group-hover:border-terracotta transition-colors bg-white shadow-sm">
+                  <Image 
+                    src={artisan.image} 
+                    alt={artisan.name} 
+                    fill
+                    sizes="160px"
+                    className="object-cover group-hover:grayscale-0 transition-all duration-500" 
+                  />
                 </div>
                 <h4 className="font-serif text-2xl font-bold mb-1">{artisan.name}</h4>
                 <p className="font-sans text-xs uppercase tracking-widest text-terracotta mb-6 font-bold">{artisan.role}</p>
@@ -157,10 +168,11 @@ export default function StoryPage() {
       <section className="relative py-24 px-6 text-forest-slate overflow-hidden border-t border-jute-base/50">
         {/* Background Image & Frosted Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/process-bg.jpg" 
             alt="Jute harvesting process" 
-            className="w-full h-full object-cover opacity-70"
+            fill
+            className="object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-[#f5e8ce]/60 backdrop-blur-[2px]"></div>
         </div>
@@ -251,10 +263,11 @@ export default function StoryPage() {
             
             {/* Background Texture & Dark Overlay */}
             <div className="absolute inset-0 z-0">
-              <img 
+              <Image 
                 src="/images/story-cta-bg.jpg" 
                 alt="Jute weaving texture" 
-                className="w-full h-full object-cover opacity-90"
+                fill
+                className="object-cover opacity-90"
               />
               <div className="absolute inset-0 bg-forest-slate/60 backdrop-blur-[2px]"></div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image"; // <-- NEW IMPORT
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
 import { sendContactEmail } from "../actions/contact";
 
@@ -69,14 +70,16 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col w-full bg-white text-black min-h-screen">
       
-      {/* UPDATED: Hero Section with Background Image & Glassmorphism */}
+      {/* UPDATED: Hero Section with Next.js Image */}
       <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
         {/* Background Image & Light Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/bg.jpg" 
             alt="Artisan workspace" 
-            className="w-full h-full object-cover opacity-80" 
+            fill
+            priority
+            className="object-cover opacity-80" 
           />    
           <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
         </div>

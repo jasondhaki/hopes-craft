@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image"; // <-- 1. Imported Next.js Image component
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import { useCurrency } from "../context/CurrencyContext";
-// 1. Import the Cart context
 import { useCart } from "../context/CartContext";
 
 interface Product {
@@ -19,7 +19,6 @@ interface Product {
 
 export default function ProductCard({ product }: { product: Product }) {
   const { currency } = useCurrency();
-  // 2. Extract the addToCart function
   const { addToCart } = useCart();
 
   const displayPrice = currency === "USD" 
@@ -32,12 +31,15 @@ export default function ProductCard({ product }: { product: Product }) {
     <div className="group flex flex-col bg-white rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
       
       <div className="relative h-80 w-full overflow-hidden bg-gray-50 block">
-        <Link href={`/shop/${product.slug}`} className="block w-full h-full">
+        {/* Added "relative" to the Link wrapper so the fill Image property works perfectly */}
+        <Link href={`/shop/${product.slug}`} className="relative block w-full h-full">
           {product.imageUrl ? (
-            <img
+            <Image
               src={product.imageUrl}
               alt={displayTitle}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 font-sans text-sm">
@@ -53,7 +55,6 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
 
         <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
-          {/* 3. Wire up the quick add button */}
           <button 
             className="w-full bg-forest-slate text-white py-3 text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-terracotta transition-colors flex items-center justify-center space-x-2"
             onClick={(e) => {

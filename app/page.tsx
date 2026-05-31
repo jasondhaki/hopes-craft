@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Image from "next/image"; // <-- NEW IMPORT
 import { ArrowRight, Mail } from "lucide-react";
 import { client } from "../lib/sanity";
 import HeroSlider from "../components/HeroSlider";
 import TrustBar from "../components/TrustBar";
 import ProductCard from "../components/ProductCard";
 import LatestArrivalsSlider from "../components/LatestArrivalsSlider";
-import HomeNewsletterForm from "../components/HomeNewsletterForm"; // <-- NEW IMPORT
+import HomeNewsletterForm from "../components/HomeNewsletterForm";
 
 // Force dynamic to ensure fresh product data
 export const dynamic = "force-dynamic";
@@ -47,10 +48,11 @@ export default async function Home() {
       <section className="py-16 w-full relative overflow-hidden">
         {/* Background Texture & Light Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/latest-bg.jpg" 
             alt="Warm sunlit background" 
-            className="w-full h-full object-cover opacity-80" 
+            fill
+            className="object-cover opacity-80" 
           />    
           {/* Bumped opacity to 60% for a better frosted glass effect so cards pop */}
           <div className="absolute inset-0 bg-[#f5e8ce]/60 backdrop-blur-[2px]"></div>
@@ -73,11 +75,11 @@ export default async function Home() {
             
             {/* Left Flank (Images) */}
             <div className="hidden lg:flex lg:col-span-3 flex-col gap-8 relative z-10">
-              <div className="aspect-[3/4] w-full overflow-hidden rounded-sm shadow-sm transform -translate-y-12">
-                <img src="/images/legacy-1.jpg" alt="Artisan weaving" className="object-cover w-full h-full hover:scale-105 transition-transform duration-1000" />
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm shadow-sm transform -translate-y-12">
+                <Image src="/images/legacy-1.jpg" alt="Artisan weaving" fill sizes="(max-width: 1024px) 100vw, 25vw" className="object-cover hover:scale-105 transition-transform duration-1000" />
               </div>
-              <div className="aspect-square w-4/5 self-end overflow-hidden rounded-sm shadow-sm transform translate-x-4">
-                <img src="/images/legacy-2.jpg" alt="Jute texture" className="object-cover w-full h-full hover:scale-105 transition-transform duration-1000" />
+              <div className="relative aspect-square w-4/5 self-end overflow-hidden rounded-sm shadow-sm transform translate-x-4">
+                <Image src="/images/legacy-2.jpg" alt="Jute texture" fill sizes="(max-width: 1024px) 100vw, 25vw" className="object-cover hover:scale-105 transition-transform duration-1000" />
               </div>
             </div>
 
@@ -97,11 +99,11 @@ export default async function Home() {
 
             {/* Right Flank (Images) */}
             <div className="hidden lg:flex lg:col-span-3 flex-col gap-8 relative z-10">
-              <div className="aspect-square w-4/5 overflow-hidden rounded-sm shadow-sm transform -translate-x-4 translate-y-8">
-                <img src="/images/legacy-3.jpg" alt="Nature" className="object-cover w-full h-full hover:scale-105 transition-transform duration-1000" />
+              <div className="relative aspect-square w-4/5 overflow-hidden rounded-sm shadow-sm transform -translate-x-4 translate-y-8">
+                <Image src="/images/legacy-3.jpg" alt="Nature" fill sizes="(max-width: 1024px) 100vw, 25vw" className="object-cover hover:scale-105 transition-transform duration-1000" />
               </div>
-              <div className="aspect-[3/4] w-full overflow-hidden rounded-sm shadow-sm transform translate-y-16">
-                <img src="/images/legacy-4.jpg" alt="Finished craft" className="object-cover w-full h-full hover:scale-105 transition-transform duration-1000" />
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm shadow-sm transform translate-y-16">
+                <Image src="/images/legacy-4.jpg" alt="Finished craft" fill sizes="(max-width: 1024px) 100vw, 25vw" className="object-cover hover:scale-105 transition-transform duration-1000" />
               </div>
             </div>
 
@@ -112,8 +114,8 @@ export default async function Home() {
                 "/images/legacy-2.jpg",
                 "/images/legacy-3.jpg"
               ].map((src, idx) => (
-                <div key={idx} className="snap-center shrink-0 w-3/4 aspect-[3/4] overflow-hidden rounded-sm shadow-sm">
-                  <img src={src} className="w-full h-full object-cover" alt="Artisan gallery" />
+                <div key={idx} className="relative snap-center shrink-0 w-3/4 aspect-[3/4] overflow-hidden rounded-sm shadow-sm">
+                  <Image src={src} fill sizes="(max-width: 768px) 75vw, 100vw" className="object-cover" alt="Artisan gallery" />
                 </div>
               ))}
             </div>
@@ -126,10 +128,11 @@ export default async function Home() {
       <section className="py-20 w-full relative overflow-hidden">
         {/* Background Texture & Premium Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/jute-texture-bg.jpg" 
             alt="Jute texture background" 
-            className="w-full h-full object-cover opacity-90" 
+            fill
+            className="object-cover opacity-90" 
           />    
           <div className="absolute inset-0 bg-forest-slate/60 backdrop-blur-[2px]"></div>
         </div>
@@ -145,7 +148,7 @@ export default async function Home() {
               <Link href={`/shop`} key={cat._id} className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl border border-white/10 hover:border-white/30 transition-colors">
                 
                 {cat.imageUrl ? (
-                  <img src={cat.imageUrl} alt={cat.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out" />
+                  <Image src={cat.imageUrl} alt={cat.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                 ) : (
                   <div className="w-full h-full bg-jute-base flex items-center justify-center text-forest-slate font-sans text-sm">No Image</div>
                 )}
@@ -212,10 +215,11 @@ export default async function Home() {
             
             {/* Background Image & Overlay */}
             <div className="absolute inset-0">
-              <img 
+              <Image 
                 src="/images/jute-field-cta.jpg" 
                 alt="Lively jute field" 
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-forest-slate/70"></div>
             </div>

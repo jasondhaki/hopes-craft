@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image"; // <-- NEW IMPORT
 import { ArrowRight, Globe, Anchor, Package } from "lucide-react";
 import { sendWholesaleEmail } from "../actions/wholesale";
 
@@ -86,10 +87,12 @@ export default function WholesalePage() {
       <section className="relative pt-32 pb-24 px-6 text-center text-white overflow-hidden">
         {/* Background Image & Dark Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/images/bg.jpg" 
             alt="Global Shipping & Wholesale" 
-            className="w-full h-full object-cover opacity-80" 
+            fill
+            priority
+            className="object-cover opacity-80" 
           />    
           <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
         </div>

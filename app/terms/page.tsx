@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image"; // <-- NEW IMPORT
 import { ArrowLeft, Scale } from "lucide-react";
 
 export default function TermsPage() {
@@ -32,10 +33,12 @@ export default function TermsPage() {
       <section className="relative pt-32 pb-24 px-6 text-center border-b border-gray-200 overflow-hidden">
         {/* Background Image & Light Glass Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/bg.jpg" 
+          <Image 
+            src="/image_b51cfa.jpg" 
             alt="Legal terms background" 
-            className="w-full h-full object-cover opacity-80" 
+            fill
+            priority
+            className="object-cover opacity-80" 
           />    
           <div className="absolute inset-0 bg-[#f5e8ce]/30 backdrop-blur-[2px]"></div>
         </div>

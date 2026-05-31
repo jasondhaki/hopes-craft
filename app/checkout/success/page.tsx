@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-// If you are using Next.js 15, wrapping useSearchParams in Suspense is recommended,
-// but this will work perfectly for our immediate testing.
+import { Suspense } from "react";
 
-export default function CheckoutSuccessPage() {
+// We extract the part that uses useSearchParams into its own component
+function SuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order_id");
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] px-6 text-center bg-gray-50">
+    <>
       <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-8 shadow-sm">
         <CheckCircle size={48} strokeWidth={1.5} />
       </div>
@@ -30,6 +30,17 @@ export default function CheckoutSuccessPage() {
       >
         Continue Shopping
       </Link>
+    </>
+  );
+}
+
+// Then we wrap it in a Suspense boundary in the main default export
+export default function CheckoutSuccessPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[75vh] px-6 text-center bg-gray-50">
+      <Suspense fallback={<div className="font-sans text-forest-slate animate-pulse">Loading order details...</div>}>
+        <SuccessContent />
+      </Suspense>
     </div>
   );
 }

@@ -51,8 +51,8 @@ export async function POST(req: Request) {
 
     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
     
-    // We wrap the callback API in a Promise so Next.js handles it cleanly
-    return new Promise((resolve) => {
+    // FIX: Explicitly type the Promise as returning a NextResponse
+    return new Promise<NextResponse>((resolve) => {
         sslcz.init(data).then((apiResponse: any) => {
             let GatewayPageURL = apiResponse.GatewayPageURL;
             if (GatewayPageURL) {
